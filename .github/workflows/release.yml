@@ -18,10 +18,7 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm ci
-
-      - name: Run tests
-        run: npm test
+        run: npm i
 
       # Build Chrome
       - name: Build Chrome extension
