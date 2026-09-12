@@ -1,34 +1,66 @@
-changelog:
-  exclude:
-    labels:
-      - ignore-for-release
-      - internal
-    authors:
-      - dependabot
-      - github-actions[bot]
-  categories:
-    - title: 🚀 New Features
-      labels:
-        - feature
-        - enhancement
-    - title: 🐛 Bug Fixes
-      labels:
-        - bug
-        - fix
-    - title: 📚 Documentation
-      labels:
-        - documentation
-        - docs
-    - title: 🔧 Maintenance & Dependencies
-      labels:
-        - maintenance
-        - dependencies
-        - chore
-    - title: ⚡ Performance
-      labels:
-        - performance
-    - title: 🎨 UI/UX
-      labels:
-        - ui
-        - ux
-        - styling
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chrome, firefox, edge]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build extension for ${{ matrix.browser }}
+        run: npm run build:${{ matrix.browser }}
+      
+      - name: Create build artifact
+        run: |
+          cd dist/${{ matrix.browser }}
+          zip -r ../LiveVideoWallppr-${{ matrix.browser }}-${{ github.ref_name }}.zip .
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.browser }}
+          path: dist/LiveVideoWallppr-${{ matrix.browser }}-${{ github.ref_name }}.zip
+
+  create-release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts
+      
+      - name: Prepare release assets
+        run: |
+          mkdir -p release
+          find release-artifacts -name "*.zip" -exec mv {} release/ \;
+      
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: 'release/*.zip'
+          draft: false
+          generateReleaseNotes: true
+          tag: ${{ github.ref_name }}
