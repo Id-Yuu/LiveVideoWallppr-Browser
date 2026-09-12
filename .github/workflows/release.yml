@@ -26,14 +26,8 @@ jobs:
 
       - name: Archive Chrome (ZIP)
         run: |
-          cd dist/chromium
+          cd dist/chrome
           zip -r ../../LiveVideoWallppr-Chrome.zip .
-
-      - name: Archive Chrome (RAR)
-        run: |
-          sudo apt-get install -y rar
-          cd dist/chromium
-          rar a ../../LiveVideoWallppr-Chrome.rar .
 
       # Build Firefox
       - name: Build Firefox extension
@@ -44,11 +38,6 @@ jobs:
           cd dist/firefox
           zip -r ../../LiveVideoWallppr-Firefox.zip .
 
-      - name: Archive Firefox (RAR)
-        run: |
-          cd dist/firefox
-          rar a ../../LiveVideoWallppr-Firefox.rar .
-
       # Build Edge
       - name: Build Edge extension
         run: npm run build:edge
@@ -58,21 +47,13 @@ jobs:
           cd dist/edge
           zip -r ../../LiveVideoWallppr-Edge.zip .
 
-      - name: Archive Edge (RAR)
-        run: |
-          cd dist/edge
-          rar a ../../LiveVideoWallppr-Edge.rar .
-
       # Upload all assets to GitHub Release
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v2
         with:
           files: |
             LiveVideoWallppr-Chrome.zip
-            LiveVideoWallppr-Chrome.rar
             LiveVideoWallppr-Firefox.zip
-            LiveVideoWallppr-Firefox.rar
             LiveVideoWallppr-Edge.zip
-            LiveVideoWallppr-Edge.rar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
