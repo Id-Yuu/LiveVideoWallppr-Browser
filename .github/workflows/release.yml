@@ -1,0 +1,78 @@
+name: Browser Extension Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      # Build Chrome
+      - name: Build Chrome extension
+        run: npm run build:chrome
+
+      - name: Archive Chrome (ZIP)
+        run: |
+          cd dist/chromium
+          zip -r ../../LiveVideoWallppr-Chrome.zip .
+
+      - name: Archive Chrome (RAR)
+        run: |
+          sudo apt-get install -y rar
+          cd dist/chromium
+          rar a ../../LiveVideoWallppr-Chrome.rar .
+
+      # Build Firefox
+      - name: Build Firefox extension
+        run: npm run build:firefox
+
+      - name: Archive Firefox (ZIP)
+        run: |
+          cd dist/firefox
+          zip -r ../../LiveVideoWallppr-Firefox.zip .
+
+      - name: Archive Firefox (RAR)
+        run: |
+          cd dist/firefox
+          rar a ../../LiveVideoWallppr-Firefox.rar .
+
+      # Build Edge
+      - name: Build Edge extension
+        run: npm run build:edge
+
+      - name: Archive Edge (ZIP)
+        run: |
+          cd dist/edge
+          zip -r ../../LiveVideoWallppr-Edge.zip .
+
+      - name: Archive Edge (RAR)
+        run: |
+          cd dist/edge
+          rar a ../../LiveVideoWallppr-Edge.rar .
+
+      # Upload all assets to GitHub Release
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            LiveVideoWallppr-Chrome.zip
+            LiveVideoWallppr-Chrome.rar
+            LiveVideoWallppr-Firefox.zip
+            LiveVideoWallppr-Firefox.rar
+            LiveVideoWallppr-Edge.zip
+            LiveVideoWallppr-Edge.rar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
