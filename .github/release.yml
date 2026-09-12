@@ -3,64 +3,50 @@ name: Release
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        browser: [chrome, firefox, edge]
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Build extension for ${{ matrix.browser }}
-        run: npm run build:${{ matrix.browser }}
-      
-      - name: Create build artifact
-        run: |
-          cd dist/${{ matrix.browser }}
-          zip -r ../LiveVideoWallppr-${{ matrix.browser }}-${{ github.ref_name }}.zip .
-      
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-${{ matrix.browser }}
-          path: dist/LiveVideoWallppr-${{ matrix.browser }}-${{ github.ref_name }}.zip
-
-  create-release:
-    needs: build
+  build-and-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          path: release-artifacts
-      
-      - name: Prepare release assets
-        run: |
-          mkdir -p release
-          find release-artifacts -name "*.zip" -exec mv {} release/ \;
-      
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for Chrome
+        run: npm run build:chrome
+
+      - name: Build for Firefox
+        run: npm run build:firefox
+
+      - name: Build for Edge
+        run: npm run build:edge
+
+      - name: Create Chrome ZIP
+        run: cd dist/chromium && zip -r ../LiveVideoWallppr-Browser-chrome.zip . && cd ../..
+
+      - name: Create Firefox ZIP
+        run: cd dist/firefox && zip -r ../LiveVideoWallppr-Browser-firefox.zip . && cd ../..
+
+      - name: Create Edge ZIP
+        run: cd dist/edge && zip -r ../LiveVideoWallppr-Browser-edge.zip . && cd ../..
+
       - name: Create Release
-        uses: ncipollo/release-action@v1
+        uses: softprops/action-gh-release@v1
         with:
-          artifacts: 'release/*.zip'
-          draft: false
-          generateReleaseNotes: true
-          tag: ${{ github.ref_name }}
+          files: |
+            dist/LiveVideoWallppr-Browser-chrome.zip
+            dist/LiveVideoWallppr-Browser-firefox.zip
+            dist/LiveVideoWallppr-Browser-edge.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
