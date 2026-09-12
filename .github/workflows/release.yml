@@ -20,8 +20,9 @@ jobs:
           node-version: 24   # gunakan versi terbaru
 
       - name: Install dependencies
-        run: npm i
+        run: npm ci
 
+      # Build Chrome
       - name: Build Chrome
         run: npm run build:chrome
       - name: Archive Chrome
@@ -29,6 +30,7 @@ jobs:
           cd dist/chrome
           zip -r ../../LiveVideoWallppr-Chrome.zip .
 
+      # Build Firefox
       - name: Build Firefox
         run: npm run build:firefox
       - name: Archive Firefox
@@ -36,6 +38,7 @@ jobs:
           cd dist/firefox
           zip -r ../../LiveVideoWallppr-Firefox.zip .
 
+      # Build Edge
       - name: Build Edge
         run: npm run build:edge
       - name: Archive Edge
