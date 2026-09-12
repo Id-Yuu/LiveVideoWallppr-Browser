@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for Chrome
+        run: npm run build:chrome
+
+      - name: Build for Firefox
+        run: npm run build:firefox
+
+      - name: Build for Edge
+        run: npm run build:edge
+
+      - name: Create Chrome ZIP
+        run: cd dist/chromium && zip -r ../LiveVideoWallppr-Browser-chrome.zip . && cd ../..
+
+      - name: Create Firefox ZIP
+        run: cd dist/firefox && zip -r ../LiveVideoWallppr-Browser-firefox.zip . && cd ../..
+
+      - name: Create Edge ZIP
+        run: cd dist/edge && zip -r ../LiveVideoWallppr-Browser-edge.zip . && cd ../..
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/LiveVideoWallppr-Browser-chrome.zip
+            dist/LiveVideoWallppr-Browser-firefox.zip
+            dist/LiveVideoWallppr-Browser-edge.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
