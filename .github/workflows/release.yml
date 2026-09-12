@@ -6,6 +6,8 @@ on:
       - 'v*'
     branches:
       - main
+  release:
+    types: [created]
 
 jobs:
   build:
@@ -15,39 +17,32 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 24.21.0
+          node-version: 24   # gunakan versi terbaru
 
       - name: Install dependencies
         run: npm i
 
-      # Build Chrome
-      - name: Build Chrome extension
+      - name: Build Chrome
         run: npm run build:chrome
-
-      - name: Archive Chrome (ZIP)
+      - name: Archive Chrome
         run: |
           cd dist/chrome
           zip -r ../../LiveVideoWallppr-Chrome.zip .
 
-      # Build Firefox
-      - name: Build Firefox extension
+      - name: Build Firefox
         run: npm run build:firefox
-
-      - name: Archive Firefox (ZIP)
+      - name: Archive Firefox
         run: |
           cd dist/firefox
           zip -r ../../LiveVideoWallppr-Firefox.zip .
 
-      # Build Edge
-      - name: Build Edge extension
+      - name: Build Edge
         run: npm run build:edge
-
-      - name: Archive Edge (ZIP)
+      - name: Archive Edge
         run: |
           cd dist/edge
           zip -r ../../LiveVideoWallppr-Edge.zip .
 
-      # Upload all assets to GitHub Release
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v2
         with:
