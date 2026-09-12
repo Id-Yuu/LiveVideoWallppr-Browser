@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json.schemastore.org/chrome-manifest.json",
+  "chromium:manifest_version": 3,
+  "firefox:manifest_version": 2,
+  "version": "1.0.0",
+  "firefox:browser_specific_settings": {
+    "gecko": {
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    }
+  },
+  "name": "ID-YUU — LiveVideoWallppr-Browser",
+  "description": "Turn your New Tab page into an animated wallpaper using videos stored locally on your device. Nothing is ever uploaded.",
+  "icons": {
+    "16": "images/icon.png",
+    "32": "images/icon.png",
+    "48": "images/icon.png",
+    "64": "images/icon.png",
+    "128": "images/icon.png"
+  },
+  "permissions": ["storage", "unlimited_storage"],
+  "chrome_url_overrides": {
+    "newtab": "newtab/index.html"
+  }
+}

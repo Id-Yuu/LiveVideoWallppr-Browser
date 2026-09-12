@@ -1,0 +1,7 @@
+export {default as SettingsPanel} from './SettingsPanel'
+export type {SettingsPanelProps} from './SettingsPanel'
+export {default as VideoSection} from './sections/VideoSection'
+export {default as ThemesSection} from './sections/ThemesSection'
+export {default as WidgetsSection} from './sections/WidgetsSection'
+export {default as ShortcutsSection} from './sections/ShortcutsSection'
+export {default as DataSection} from './sections/DataSection'
