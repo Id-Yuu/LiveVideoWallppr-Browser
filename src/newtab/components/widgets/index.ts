@@ -1,6 +1,11 @@
 export {default as Clock} from './Clock'
 export {default as DateDisplay} from './DateDisplay'
+export {default as Greeting} from './Greeting'
 export {default as Overlay} from './Overlay'
+export {default as SearchBar} from './SearchBar'
+export {default as StickyNotes} from './StickyNotes'
 export {default as ShortcutModal} from './ShortcutModal'
 export {default as ShortcutsGrid} from './ShortcutsGrid'
+export {default as WeatherWidget} from './WeatherWidget'
 export {default as WidgetLayout} from './WidgetLayout'
+

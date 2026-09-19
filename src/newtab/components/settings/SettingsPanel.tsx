@@ -2,9 +2,12 @@ import {useEffect, useRef} from 'react'
 import {X} from 'lucide-react'
 import type {Settings, Shortcut, VideoRecord} from '../../types'
 import DataSection from './sections/DataSection'
+import SearchSection from './sections/SearchSection'
 import ShortcutsSection from './sections/ShortcutsSection'
+import StickyNotesSection from './sections/StickyNotesSection'
 import ThemesSection from './sections/ThemesSection'
 import VideoSection from './sections/VideoSection'
+import WeatherSection from './sections/WeatherSection'
 import WidgetsSection from './sections/WidgetsSection'
 
 export interface SettingsPanelProps {
@@ -86,7 +89,22 @@ export default function SettingsPanel({
             onChange={onChange}
           />
 
+          <SearchSection
+            settings={settings}
+            onChange={onChange}
+          />
+
           <WidgetsSection
+            settings={settings}
+            onChange={onChange}
+          />
+
+          <WeatherSection
+            settings={settings}
+            onChange={onChange}
+          />
+
+          <StickyNotesSection
             settings={settings}
             onChange={onChange}
           />

@@ -57,6 +57,35 @@ export default function WidgetsSection({settings, onChange}: WidgetsSectionProps
           />
         )}
 
+        <Toggle
+          label="Show Greeting"
+          checked={settings.showGreeting}
+          onChange={(v) => onChange({showGreeting: v})}
+        />
+        {settings.showGreeting && (
+          <>
+            <div className="field-group">
+              <label htmlFor="greeting-name" className="field-group__label">
+                Greeting Name
+              </label>
+              <input
+                id="greeting-name"
+                type="text"
+                className="text-input"
+                maxLength={60}
+                value={settings.greetingName}
+                placeholder="e.g. Alex (optional)"
+                onChange={(e) => onChange({greetingName: e.target.value})}
+              />
+            </div>
+            <PositionPicker
+              label="Greeting Position"
+              value={settings.greetingPosition}
+              onChange={(v) => onChange({greetingPosition: v})}
+            />
+          </>
+        )}
+
         <div className="field-group">
           <label htmlFor="custom-text" className="field-group__label">
             Custom Text

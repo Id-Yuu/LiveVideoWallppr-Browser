@@ -81,6 +81,10 @@
   z-index: 2;
 }
 
+.widget-slot > * {
+  pointer-events: auto;
+}
+
 .widget-slot > :first-child {
   margin-top: 0 !important;
 }
@@ -871,3 +875,438 @@
     right: 1.25rem;
   }
 }
+
+/* ---------- Greeting ---------- */
+
+.greeting {
+  font-size: clamp(1.3rem, 3vw, 1.9rem);
+  font-weight: 500;
+  color: var(--text-primary);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- Sticky note (custom text) ---------- */
+
+.sticky-note {
+  position: relative;
+  min-width: 120px;
+  max-width: 240px;
+  padding: 1rem 1.1rem 1.4rem;
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.35;
+  color: #2b2a1f;
+  background: var(--sticky-color, #ffe066);
+  border-radius: 2px;
+  box-shadow:
+    0 14px 26px rgba(0, 0, 0, 0.3),
+    0 2px 5px rgba(0, 0, 0, 0.15);
+  transform: rotate(var(--sticky-rotate, -2deg));
+  word-break: break-word;
+  text-align: left;
+  cursor: pointer;
+  user-select: none;
+}
+
+.sticky-note::before {
+  content: '';
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 44px;
+  height: 17px;
+  transform: translateX(-50%) rotate(-3deg);
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+}
+
+.sticky-note::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 15px 15px;
+  border-color: transparent transparent rgba(0, 0, 0, 0.14) transparent;
+}
+
+/* Long notes scroll inside the note itself rather than growing past the
+   viewport. white-space: pre-wrap keeps the author's line breaks. */
+.sticky-note__body {
+  white-space: pre-wrap;
+  overflow-y: auto;
+  max-height: min(42vh, 420px);
+  overscroll-behavior: contain;
+}
+
+.sticky-note__body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sticky-note__body::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.sticky-note__edit {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 140ms var(--ease),
+    background-color 140ms var(--ease);
+}
+
+.sticky-note:hover .sticky-note__edit,
+.sticky-note__edit:focus-visible {
+  opacity: 1;
+}
+
+.sticky-note__edit:hover {
+  background: rgba(0, 0, 0, 0.18);
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.sticky-note--editing {
+  width: min(340px, calc(100vw - 4rem));
+  max-width: none;
+  /* Straighten the note while editing so the textarea isn't typed at an
+     angle, and lift it above neighbouring widgets. */
+  transform: rotate(0deg);
+  z-index: 6;
+  cursor: default;
+  user-select: auto;
+}
+
+.sticky-note__textarea {
+  display: block;
+  width: 100%;
+  min-height: 140px;
+  max-height: min(46vh, 440px);
+  resize: vertical;
+  border: none;
+  outline: none;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: 1.35;
+  white-space: pre-wrap;
+}
+
+.sticky-note__textarea::placeholder {
+  color: rgba(0, 0, 0, 0.35);
+}
+
+.sticky-note__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-top: 0.6rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.sticky-note__count--over {
+  color: #a13b3b;
+  font-weight: 700;
+}
+
+/* ---------- Search bar ---------- */
+
+.search-bar {
+  position: relative;
+  width: min(520px, calc(100vw - 4rem));
+}
+
+.search-bar__form {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.4rem 0.35rem 0.5rem;
+  border-radius: 999px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--shadow-pop);
+  transition: border-color 160ms var(--ease);
+}
+
+.search-bar__form:focus-within {
+  border-color: var(--accent);
+}
+
+.search-bar__engine {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  max-width: 40%;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-soft);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    color 140ms var(--ease),
+    background-color 140ms var(--ease);
+}
+
+.search-bar__engine:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.search-bar__engine-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-bar__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  padding: 0.35rem 0.25rem;
+}
+
+.search-bar__input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.search-bar__submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: #12141f;
+  cursor: pointer;
+  transition:
+    opacity 140ms var(--ease),
+    background-color 140ms var(--ease);
+}
+
+.search-bar__submit:hover:not(:disabled) {
+  background: var(--accent-strong);
+}
+
+.search-bar__submit:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.search-bar__picker {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 0;
+  z-index: 8;
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem;
+  min-width: 190px;
+  max-height: 280px;
+  overflow-y: auto;
+  border-radius: var(--radius-md);
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border-strong);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--shadow-glass);
+}
+
+.search-bar__picker-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.search-bar__picker-option:hover {
+  background: var(--glass-bg-soft);
+  color: var(--text-primary);
+}
+
+.search-bar__picker-option--active {
+  background: var(--accent-wash);
+  color: var(--text-primary);
+  font-weight: 550;
+}
+
+/* ---------- Weather ---------- */
+
+.weather-widget {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--shadow-pop);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  pointer-events: auto;
+}
+
+.weather-widget--muted {
+  cursor: default;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.weather-widget__icon {
+  color: var(--accent-strong);
+  flex-shrink: 0;
+}
+
+.weather-widget__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.weather-widget__temp {
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.weather-widget__location {
+  font-size: 0.74rem;
+  color: var(--text-tertiary);
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.weather-widget__spinner {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--glass-border-strong);
+  border-top-color: var(--accent);
+  animation: weather-spin 700ms linear infinite;
+}
+
+@keyframes weather-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.weather-location-picker {
+  padding: 0.4rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.weather-location-picker__current {
+  margin: -0.3rem 0 0;
+  font-size: 0.82rem;
+  color: var(--text-primary);
+}
+
+.weather-location-picker__search {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.weather-location-picker__search .text-input {
+  flex: 1;
+}
+
+.weather-location-picker__results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.weather-location-picker__results button {
+  width: 100%;
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-soft);
+  color: var(--text-primary);
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+
+.weather-location-picker__results button:hover {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+
+/* ---------- Settings Additional Components ---------- */
+
+.input-with-button {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.input-with-button .text-input {
+  flex: 1;
+}
+
+.sticky-notes-settings-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.4rem 0;
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+}
+
+

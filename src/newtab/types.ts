@@ -30,6 +30,18 @@ export interface Shortcut {
   url: string
 }
 
+export type SearchEngineId =
+  | 'google'
+  | 'bing'
+  | 'duckduckgo'
+  | 'brave'
+  | 'ecosia'
+  | 'yahoo'
+  | 'youtube'
+  | 'custom'
+
+export type WeatherUnit = 'celsius' | 'fahrenheit'
+
 export interface Settings {
   activeVideoId: string | null
   autoplay: boolean
@@ -54,6 +66,27 @@ export interface Settings {
   datePosition: WidgetPosition
   customTextPosition: WidgetPosition
   shortcutsPosition: WidgetPosition
+  // Sticky Notes
+  showStickyNotes: boolean
+  stickyNotesPosition: WidgetPosition
+  stickyNotesContent: string
+  // Greeting
+  showGreeting: boolean
+  greetingPosition: WidgetPosition
+  greetingName: string
+  // Weather
+  showWeather: boolean
+  weatherPosition: WidgetPosition
+  weatherUnit: WeatherUnit
+  weatherCity: string
+  weatherLatitude: number | null
+  weatherLongitude: number | null
+  // Address / Search Bar
+  showSearchBar: boolean
+  searchBarPosition: WidgetPosition
+  searchEngine: SearchEngineId
+  customSearchEngineUrl: string
+  searchOpenInNewTab: boolean
 }
 
 export interface SettingsExport {
@@ -62,3 +95,4 @@ export interface SettingsExport {
 }
 
 export {DEFAULT_SHORTCUTS, DEFAULT_SETTINGS, ACCEPTED_VIDEO_TYPES} from './constants'
+

@@ -3,10 +3,29 @@ import {
   DEFAULT_SHORTCUTS,
   WIDGET_POSITIONS
 } from '../constants'
-import type {ClockFormat, Settings, Shortcut, VideoFit, WidgetPosition} from '../types'
+import type {
+  ClockFormat,
+  SearchEngineId,
+  Settings,
+  Shortcut,
+  VideoFit,
+  WeatherUnit,
+  WidgetPosition
+} from '../types'
 
 const VALID_FITS: readonly VideoFit[] = ['cover', 'contain', 'fill']
 const VALID_CLOCK_FORMATS: readonly ClockFormat[] = ['12h', '24h']
+const VALID_SEARCH_ENGINES: readonly SearchEngineId[] = [
+  'google',
+  'bing',
+  'duckduckgo',
+  'brave',
+  'ecosia',
+  'yahoo',
+  'youtube',
+  'custom'
+]
+const VALID_WEATHER_UNITS: readonly WeatherUnit[] = ['celsius', 'fahrenheit']
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value))
@@ -106,6 +125,54 @@ export function sanitizeSettings(raw: unknown): Settings {
   if (isValidPosition(data.datePosition)) next.datePosition = data.datePosition
   if (isValidPosition(data.customTextPosition)) next.customTextPosition = data.customTextPosition
   if (isValidPosition(data.shortcutsPosition)) next.shortcutsPosition = data.shortcutsPosition
+
+  // Sticky Notes
+  if (typeof data.showStickyNotes === 'boolean') next.showStickyNotes = data.showStickyNotes
+  if (isValidPosition(data.stickyNotesPosition)) next.stickyNotesPosition = data.stickyNotesPosition
+  if (typeof data.stickyNotesContent === 'string') {
+    // Limit to safe string size (e.g. up to 100,000 characters)
+    next.stickyNotesContent = data.stickyNotesContent.slice(0, 100000)
+  }
+
+  // Greeting
+  if (typeof data.showGreeting === 'boolean') next.showGreeting = data.showGreeting
+  if (isValidPosition(data.greetingPosition)) next.greetingPosition = data.greetingPosition
+  if (typeof data.greetingName === 'string') {
+    next.greetingName = data.greetingName.slice(0, 60)
+  }
+
+  // Weather
+  if (typeof data.showWeather === 'boolean') next.showWeather = data.showWeather
+  if (isValidPosition(data.weatherPosition)) next.weatherPosition = data.weatherPosition
+  if (typeof data.weatherUnit === 'string' && VALID_WEATHER_UNITS.includes(data.weatherUnit as WeatherUnit)) {
+    next.weatherUnit = data.weatherUnit as WeatherUnit
+  }
+  if (typeof data.weatherCity === 'string') {
+    next.weatherCity = data.weatherCity.slice(0, 100)
+  }
+  if (typeof data.weatherLatitude === 'number' && Number.isFinite(data.weatherLatitude)) {
+    next.weatherLatitude = clamp(data.weatherLatitude, -90, 90)
+  } else if (data.weatherLatitude === null) {
+    next.weatherLatitude = null
+  }
+  if (typeof data.weatherLongitude === 'number' && Number.isFinite(data.weatherLongitude)) {
+    next.weatherLongitude = clamp(data.weatherLongitude, -180, 180)
+  } else if (data.weatherLongitude === null) {
+    next.weatherLongitude = null
+  }
+
+  // Search Bar
+  if (typeof data.showSearchBar === 'boolean') next.showSearchBar = data.showSearchBar
+  if (isValidPosition(data.searchBarPosition)) next.searchBarPosition = data.searchBarPosition
+  if (typeof data.searchEngine === 'string' && VALID_SEARCH_ENGINES.includes(data.searchEngine as SearchEngineId)) {
+    next.searchEngine = data.searchEngine as SearchEngineId
+  }
+  if (typeof data.customSearchEngineUrl === 'string') {
+    next.customSearchEngineUrl = data.customSearchEngineUrl.slice(0, 500)
+  }
+  if (typeof data.searchOpenInNewTab === 'boolean') {
+    next.searchOpenInNewTab = data.searchOpenInNewTab
+  }
 
   return next
 }

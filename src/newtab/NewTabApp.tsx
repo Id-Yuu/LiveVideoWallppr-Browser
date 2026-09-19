@@ -184,6 +184,7 @@ export default function NewTabApp() {
           onAddShortcut={handleOpenAddShortcut}
           onEditShortcut={handleOpenEditShortcut}
           onDeleteShortcut={handleDeleteShortcut}
+          onUpdateSettings={updateSettings}
         />
 
         {showEmptyState && (
